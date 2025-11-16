@@ -11,23 +11,7 @@ class productsList extends StatefulWidget {
 }
 
 class _productsListState extends State<productsList> {
-  List<Product> _products = [
-    Product(
-      title: "Mouse",
-      description: "Mouse Gamer RGB Logitech para jogos FPS",
-      price: 180.00,
-    ),
-    Product(
-      title: "Teclado",
-      description: "Teclado Attack Shark K86 - Mecanico",
-      price: 320.00,
-    ),
-    Product(
-      title: "Headset",
-      description: "Headset Pichau - Emulado 7.1 - RGB",
-      price: 250.00,
-    ),
-  ];
+  List<Product> _products = [];
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +54,10 @@ class _productsListState extends State<productsList> {
                         productOperation(product: productItem),
                   ),
                 );
-                if (editProduct != null) {
-                  setState(() {
-                    _products.removeAt(position);
-                    _products.insert(position, editProduct);
-                  });
-                }
+                setState(() {
+                  _products.removeAt(position);
+                  _products.insert(position, editProduct);
+                });
               },
             ),
           );

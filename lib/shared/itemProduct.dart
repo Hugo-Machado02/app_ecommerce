@@ -3,7 +3,6 @@ import 'package:app_ecommerce/models/product.dart';
 
 class Itemproduct extends StatefulWidget {
   final Product product;
-  final String imageUrl = "images/sem_foto.jpg";
   final VoidCallback? onLongPress;
 
   const Itemproduct({super.key, required this.product, this.onLongPress});
@@ -17,7 +16,14 @@ class _ItemproductState extends State<Itemproduct> {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image(image: AssetImage(widget.imageUrl)),
+        leading: Container(
+          padding: EdgeInsets.all(0),
+          width: 60,
+          height: 60,
+          child: widget.product.imageProduct != null
+              ? Image.file(widget.product.imageProduct!, fit: BoxFit.cover)
+              : Icon(Icons.hide_image, size: 40),
+        ),
         title: Text(
           widget.product.title,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
