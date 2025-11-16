@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:app_ecommerce/models/product.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class productOperation extends StatefulWidget {
   Product? product;
@@ -15,6 +18,9 @@ class _productOperationState extends State<productOperation> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  final ImagePicker _imgProduto = ImagePicker();
+
+  File? _imageProduct;
 
   @override
   void initState() {
@@ -23,6 +29,7 @@ class _productOperationState extends State<productOperation> {
       _titleController.text = widget.product!.title;
       _descriptionController.text = widget.product!.description;
       _priceController.text = widget.product!.price.toString();
+      _imageProduct = widget.product!.imageProduct;
     }
   }
 
@@ -35,7 +42,7 @@ class _productOperationState extends State<productOperation> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            "Cadastro de Produtos",
+            widget.product != null ? "Editar Produto" : "Cadastro de Produtos",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900),
           ),
           backgroundColor: widget.product != null
@@ -50,17 +57,42 @@ class _productOperationState extends State<productOperation> {
               children: [
                 Container(
                   margin: EdgeInsets.all(20),
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      border: Border.all(color: Colors.grey, width: 3),
-                      image: DecorationImage(
-                        image: AssetImage("images/sem_foto.jpg"),
-                        fit: BoxFit
-                            .cover, // Para a imagem preencher o espaço sem distorcer
+                  child: GestureDetector(
+                    onTap: () async {
+                      final XFile? pickedFile = await _imgProduto.pickImage(
+                        source: ImageSource.camera,
+                      );
+                      if (pickedFile != null) {
+                        final File imagePicked = File(pickedFile.path);
+                        Directory dir =
+                            await getApplicationDocumentsDirectory();
+                        String localPath = dir.path;
+                        String idImage = UniqueKey().toString();
+                        final File pathImageSave = await imagePicked.copy(
+                          "$localPath/img_$idImage.png",
+                        );
+                        setState(() {
+                          _imageProduct = pathImageSave;
+                        });
+                      }
+                    },
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.blue[100],
+                        borderRadius: BorderRadius.circular(15.0),
+                        border: Border.all(color: Colors.blue, width: 3),
                       ),
+                      child: _imageProduct != null
+                          ? Image.file(
+                              _imageProduct!,
+                              fit: BoxFit
+                                  .cover, // Controla o "fix" (ajuste da imagem)
+                              width: 150,
+                              height: 150,
+                            )
+                          : Icon(Icons.add_a_photo, size: 40),
                     ),
                   ),
                 ),
@@ -106,21 +138,15 @@ class _productOperationState extends State<productOperation> {
                                   ? Colors.blueAccent
                                   : Colors.green,
                               width: 2.5,
-                            ), // Borda quando está focado
+                            ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ), // Borda quando está focado
+                            borderSide: BorderSide(color: Colors.red, width: 2),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 3,
-                            ), // Borda quando está focado
+                            borderSide: BorderSide(color: Colors.red, width: 3),
                           ),
                         ),
                         style: TextStyle(color: Colors.black, fontSize: 12),
@@ -176,21 +202,15 @@ class _productOperationState extends State<productOperation> {
                                   ? Colors.blueAccent
                                   : Colors.green,
                               width: 2.5,
-                            ), // Borda quando está focado
+                            ),
                           ),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2,
-                            ), // Borda quando está focado
+                            borderSide: BorderSide(color: Colors.red, width: 2),
                           ),
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 3,
-                            ), // Borda quando está focado
+                            borderSide: BorderSide(color: Colors.red, width: 3),
                           ),
                         ),
                         style: TextStyle(color: Colors.black, fontSize: 12),
@@ -259,7 +279,7 @@ class _productOperationState extends State<productOperation> {
                                   ? Colors.blueAccent
                                   : Colors.green,
                               width: 3,
-                            ), // Borda quando está focado
+                            ),
                           ),
                         ),
                         style: TextStyle(color: Colors.black, fontSize: 12),
@@ -297,19 +317,20 @@ class _productOperationState extends State<productOperation> {
                                   title: _titleController.text,
                                   description: _descriptionController.text,
                                   price: priceValid,
+                                  imageProduct: _imageProduct,
                                 );
 
                                 Navigator.pop(context, newProduct);
                               }
                             },
-                            child: Text(
-                              widget.product != null ? "Editar" : "Cadastrar",
-                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: widget.product != null
                                   ? Colors.blueAccent
                                   : Colors.greenAccent[700],
                               foregroundColor: Colors.white,
+                            ),
+                            child: Text(
+                              widget.product != null ? "Editar" : "Cadastrar",
                             ),
                           ),
                         ),
