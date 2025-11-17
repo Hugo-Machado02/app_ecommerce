@@ -80,9 +80,16 @@ class _productOperationState extends State<productOperation> {
                       width: 150,
                       height: 150,
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
+                        color: widget.product != null
+                            ? Colors.blue[100]
+                            : Colors.green[100],
                         borderRadius: BorderRadius.circular(15.0),
-                        border: Border.all(color: Colors.blue, width: 3),
+                        border: Border.all(
+                          color: widget.product != null
+                              ? Colors.blue
+                              : Colors.green,
+                          width: 3,
+                        ),
                       ),
                       child: _imageProduct != null
                           ? Image.file(
@@ -313,11 +320,17 @@ class _productOperationState extends State<productOperation> {
                                   _priceController.text.replaceAll(",", "."),
                                 );
 
+                                String title = _titleController.text.toString();
+                                String description = _descriptionController.text
+                                    .toString();
+                                double price = priceValid;
+
                                 Product newProduct = Product(
-                                  title: _titleController.text,
-                                  description: _descriptionController.text,
-                                  price: priceValid,
+                                  title,
+                                  description,
+                                  price,
                                   imageProduct: _imageProduct,
+                                  id: widget.product?.id,
                                 );
 
                                 Navigator.pop(context, newProduct);
