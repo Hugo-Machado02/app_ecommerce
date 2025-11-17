@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:app_ecommerce/models/product.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Itemproduct extends StatefulWidget {
   final Product product;
@@ -17,11 +18,18 @@ class _ItemproductState extends State<Itemproduct> {
     return Card(
       child: ListTile(
         leading: Container(
-          padding: EdgeInsets.all(0),
           width: 60,
           height: 60,
           child: widget.product.imageProduct != null
-              ? Image.file(widget.product.imageProduct!, fit: BoxFit.cover)
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(
+                    widget.product.imageProduct!,
+                    fit: BoxFit.cover,
+                    width: 60,
+                    height: 60,
+                  ),
+                )
               : Icon(Icons.hide_image, size: 40),
         ),
         title: Text(
@@ -36,7 +44,32 @@ class _ItemproductState extends State<Itemproduct> {
           "R\$ ${widget.product.priceFormatted.toString().replaceAll(".", ",")}",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
         ),
-        onTap: () {},
+
+        onTap: () async {
+          const String phoneNumber = '+5564993411881';
+          final String title = widget.product.title;
+          final String price = "R\$ ${widget.product.priceFormatted}";
+          final String message =
+              "Olá! Tenho interesse no produto: $title, que custa $price. Gostaria de saber mais.";
+
+          final Uri smsUri = Uri(
+            scheme: 'sms',
+            path: phoneNumber,
+            query: 'body=$message',
+          );
+
+          try {
+            await launchUrl(smsUri);
+          } catch (e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "Erro ao abrir o aplicativo de SMS.",
+                ),
+              ),
+            );
+          }
+        },
         onLongPress: widget.onLongPress,
       ),
     );

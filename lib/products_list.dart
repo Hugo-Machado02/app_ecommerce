@@ -122,7 +122,7 @@ class _productsListState extends State<productsList> {
 
             SnackBar snackBar = SnackBar(
               content: Text(_notification),
-              backgroundColor: Colors.greenAccent,
+              backgroundColor: Colors.blueAccent[100],
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           });

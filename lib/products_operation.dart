@@ -92,12 +92,14 @@ class _productOperationState extends State<productOperation> {
                         ),
                       ),
                       child: _imageProduct != null
-                          ? Image.file(
-                              _imageProduct!,
-                              fit: BoxFit
-                                  .cover, // Controla o "fix" (ajuste da imagem)
-                              width: 150,
-                              height: 150,
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(15.0),
+                              child: Image.file(
+                                _imageProduct!,
+                                fit: BoxFit.cover,
+                                width: 150,
+                                height: 150,
+                              ),
                             )
                           : Icon(Icons.add_a_photo, size: 40),
                     ),
